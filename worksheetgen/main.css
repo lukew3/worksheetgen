@@ -1,0 +1,36 @@
+html {
+  font-family: 'Roboto', sans-serif;
+  margin: none;
+}
+
+#header {
+  position: relative;
+  margin-bottom: 10pt;
+}
+
+#title {
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+}
+
+#name {
+  position: absolute;
+  float: right;
+  bottom: 0;
+  right: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.problem_text {
+  width: 75%;
+  word-wrap: break-word;
+  display: inline-block;
+  font-size: 12pt;
+}
+
+.problem_answerline {
+  display: inline-block;
+  float: right;
+}
