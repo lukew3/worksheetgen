@@ -1,28 +1,11 @@
-from worksheetgen import wg
-from mathgenerator import mathgen
+from worksheetgen.wg import Worksheet
 
-title = 'Worksheet test'
-set = [
-    ['This is the first problem', 'firstans'],
-    ['This is the second problem', 'secondans'],
-    ['This is a really really really really really really really really really really really really really really really really long problem', 'hi'],
-]
-# main.write_pdf(title, set)
-set = []
-for i in range(100):
-    set.append(mathgen.genById(0)[0])
-myTest = wg.Worksheet(title='Basic Test')
-myprob = '9+10'
-myTest.add_problem(myprob)
-myoptions = [
-'France',
-'Mexico',
-'Egypt',
-'China'
-]
-myTest.add_problem('Where is the Eiffel Tower located?', 'France', type='mc', options=myoptions)
-myTest.add_instruction('For problems 3-100, evaluate the equation')
-myTest.add_problem('this is a test')
-myTest.add_problem('This is a really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really long problem', 'secondans')
-myTest.add_problems_list(set)
-myTest.write_pdf()
+# Instantiates the worksheet object and titles it
+ws = Worksheet(title='Example Worksheet')
+# Adds an instruction segment with the given text to the worksheet
+ws.add_instruction('Evaluate the following math problems')
+# Adds the problem given to the worksheet
+ws.add_problem('What is 9 + 10?')
+ws.add_problem('What is the square root of 9?')
+# Export pdf to ws.pdf
+ws.write_pdf()
