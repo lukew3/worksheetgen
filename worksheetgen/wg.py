@@ -28,7 +28,7 @@ class Worksheet:
         # Change Title
         with open(workingFile, "r") as file:
             lines = file.readlines()
-            lines[11] = '<h1 id="title">' + self.title + '</h1>'
+            lines[67] = '<h1 id="title">' + self.title + '</h1>\n'
         with open(workingFile, "w") as file:
             file.writelines(lines)
 
@@ -89,7 +89,7 @@ class Worksheet:
         HTML(workingFile).write_pdf('ws.pdf')
 
         # Remove working copy
-        os.remove(workingFile)
+        # os.remove(workingFile)
 
     def add_problem(self, problem, answer='', type='', options=[]):
         newprob = Problem(problem, answer, type=type, options=options)
