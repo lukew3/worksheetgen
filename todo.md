@@ -2,10 +2,6 @@
 now
 
 later
-* Multilanguage support
-  * This seems like it would be difficult
-  * All you would have to do would be change the 'Name' p to say name in whatever language the user desires
-  * Could easily use python translate, I'm not sure if that would bloat the software if it wasn't really needed though
 * Different styles and sectioning
   * Some people may desire a configuration where there is empty space below a problem and not a line beside it
   * Add sections with section instructions so that each problem doesn't need their own instructions
@@ -18,10 +14,11 @@ later
   * New line would be added underneath original problem with letter choices
   * Automatically decide how many should be on a row based on what fits
     * Either 4, 2, or 1 option per line
-* Make it look better
-  * Maybe add page numbers
 * Add math problem formatting
   * Use $$<math>$$ formatting so that problems can be formatting while text is not
     * Maybe use other typical formatting symbols like single $'s
-* Add option to make standard test from list of problems
-* Clean up similarly named things
+* Clean up similarly named things in code
+* Multilanguage support
+  * This seems like it would be difficult
+  * All you would have to do would be change the 'Name' p to say name in whatever language the user desires
+  * Could easily use python translate, I'm not sure if that would bloat the software if it wasn't really needed though
