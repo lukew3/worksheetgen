@@ -1,12 +1,16 @@
 from weasyprint import HTML
 from shutil import copyfile
 import os
+import random
 
 class Problem:
-    def __init__(self, question, answer='', type=''):
+    def __init__(self, question, answer='', type='', options=[]):
         self.question = question
         self.answer = answer
         self.type = type
+        self.options = options
+        if self.options != []:
+            print(self.options)
 
 
 class Worksheet:
@@ -50,6 +54,25 @@ class Worksheet:
                 '    <p class="problem_text"><b>' + problemObj.question + '</b></p>\n',
                 '</div>\n'
                 ]
+            elif problemObj.type == 'mc':
+                option_list = problemObj.options
+                # Shuffle list
+                random.shuffle(option_list)
+                answer_index = option_list.index(problemObj.answer)
+                problemObj.answer = chr(answer_index + 65)
+
+                newlines = [
+                '<div class="problem" >\n',
+                '    <p class="problem_answerline">' + str(i) + ')______________</p>\n',
+                '    <p class="problem_text">' + str(i) + ') ' + problemObj.question + '</p>\n',
+                '    <ul>\n',
+                '       <li class="mc_option">A) ' + option_list[0] + '</li>'
+                '       <li class="mc_option">B) ' + option_list[1] + '</li>'
+                '       <li class="mc_option">C) ' + option_list[2] + '</li>'
+                '       <li class="mc_option">D) ' + option_list[3] + '</li>'
+                '    </ul>\n'
+                '</div>\n'
+                ]
             return newlines
 
         # write file
@@ -68,8 +91,8 @@ class Worksheet:
         # Remove working copy
         os.remove(workingFile)
 
-    def add_problem(self, problem, answer='', type=''):
-        newprob = Problem(problem, answer)
+    def add_problem(self, problem, answer='', type='', options=[]):
+        newprob = Problem(problem, answer, type=type, options=options)
         self.prob_list.append(newprob)
 
     def add_problems_list(self, problems_list):

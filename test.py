@@ -11,11 +11,17 @@ set = [
 set = []
 for i in range(100):
     set.append(mathgen.genById(0)[0])
-
 myTest = wg.Worksheet(title='Basic Test')
 myprob = '9+10'
 myTest.add_problem(myprob)
-myTest.add_instruction('For problems 1-100, evaluate the equation')
+myoptions = [
+'France',
+'Mexico',
+'Egypt',
+'China'
+]
+myTest.add_problem('Where is the Eiffel Tower located?', 'France', type='mc', options=myoptions)
+myTest.add_instruction('For problems 3-100, evaluate the equation')
 myTest.add_problem('this is a test')
 myTest.add_problem('This is a really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really long problem', 'secondans')
 myTest.add_problems_list(set)
