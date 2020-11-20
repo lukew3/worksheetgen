@@ -15,6 +15,7 @@ for i in range(100):
 myTest = wg.Worksheet(title='Basic Test')
 myprob = '9+10'
 myTest.add_problem(myprob)
+myTest.add_instruction('For problems 1-100, evaluate the equation')
 myTest.add_problem('this is a test')
 myTest.add_problem('This is a really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really long problem', 'secondans')
 myTest.add_problems_list(set)

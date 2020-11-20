@@ -3,9 +3,10 @@ from shutil import copyfile
 import os
 
 class Problem:
-    def __init__(self, question, answer=''):
+    def __init__(self, question, answer='', type=''):
         self.question = question
         self.answer = answer
+        self.type = type
 
 
 class Worksheet:
@@ -36,12 +37,19 @@ class Worksheet:
 
         # Define write_prob function
         def write_prob(problemObj, i):
-            newlines = [
-            '<div class="problem" >\n',
-            '    <p class="problem_text">' + str(i) + ') ' + problemObj.question + '</p>\n',
-            '    <p class="problem_answerline">' + str(i) + ')______________</p>\n',
-            '</div>\n'
-            ]
+            if problemObj.type == '':
+                newlines = [
+                '<div class="problem" >\n',
+                '    <p class="problem_text">' + str(i) + ') ' + problemObj.question + '</p>\n',
+                '    <p class="problem_answerline">' + str(i) + ')______________</p>\n',
+                '</div>\n'
+                ]
+            elif problemObj.type == 'instruction':
+                newlines = [
+                '<div class="problem" >\n',
+                '    <p class="problem_text"><b>' + problemObj.question + '</b></p>\n',
+                '</div>\n'
+                ]
             return newlines
 
         # write file
@@ -50,7 +58,8 @@ class Worksheet:
             g.writelines(upper)
             for problemObj in self.prob_list:
                 g.writelines(write_prob(problemObj, i))
-                i += 1
+                if problemObj.type != 'instruction':
+                    i += 1
             g.writelines(lower)
 
         # export pdf
@@ -76,3 +85,7 @@ class Worksheet:
             else:
                 newprob = Problem(item)
             self.prob_list.append(newprob)
+
+    def add_instruction(self, instruction_text):
+        newprob = Problem(instruction_text, '', type='instruction')
+        self.prob_list.append(newprob)
