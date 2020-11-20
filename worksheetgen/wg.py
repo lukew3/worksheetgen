@@ -89,7 +89,7 @@ class Worksheet:
         HTML(workingFile).write_pdf('ws.pdf')
 
         # Remove working copy
-        # os.remove(workingFile)
+        os.remove(workingFile)
 
     def add_problem(self, problem, answer='', type='', options=[]):
         newprob = Problem(problem, answer, type=type, options=options)

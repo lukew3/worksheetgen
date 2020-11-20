@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(name='worksheetgen',
-      version='0.0.2',
+      version='0.0.3',
       description='A worksheet generator',
       url='https://github.com/lukew3/worksheetgen',
       author='Luke Weiler',
