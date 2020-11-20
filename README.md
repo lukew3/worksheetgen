@@ -19,7 +19,7 @@ ws.add_problem('What is the square root of 9?')
 # Export pdf to ws.pdf
 ws.write_pdf()
 ```
-This produces the following pdf:
+This produces the following pdf(without the black borders shown in the image):
 
 ![Image of output pdf](https://github.com/lukew3/worksheetgen/blob/main/ws.png)
 ## Documentation
