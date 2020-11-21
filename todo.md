@@ -22,3 +22,8 @@ later
   * This seems like it would be difficult
   * All you would have to do would be change the 'Name' p to say name in whatever language the user desires
   * Could easily use python translate, I'm not sure if that would bloat the software if it wasn't really needed though
+
+* Make an add_object method where you can specify type and then make an add_problem, add_instruction, etc. that just point to an object class. That way, you won't have to specify a type in kwargs, you'll just specify it in the method name.
+  * Actually the object class should just hold an object based on it's type
+  * One object type can be group type where you can make a group of questions
+  * I'm thinking of these ideas but don't know when people would actually use them
