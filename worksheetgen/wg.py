@@ -58,7 +58,7 @@ class Worksheet:
         HTML(workingFile).write_pdf('ws.pdf')
 
         # Remove temp directory
-        # shutil.rmtree(tempdir)
+        shutil.rmtree(tempdir)
 
     def add_problem(self, problem, answer='', type='', options=[]):
         newprob = Problem(problem, answer, type=type, options=options)

@@ -61,8 +61,10 @@ def write_math(obj, probNum):
     newlines = [
     '<div class="problem" >\n',
     '    <p class="problem_answerline">' + str(probNum) + ')______________</p>\n',
-    '    <p class="problem_text">' + str(probNum) + ')</p>\n',
-    '    <img src="out' + str(renderNum) + '.png" class="math_image">\n',
+    '    <div class="flex-parent">\n',
+    '       <p class="problem_text">' + str(probNum) + ')</p>\n',
+    '       <img src="out' + str(renderNum) + '.png" class="math_image">\n',
+    '    </div>\n',
     '</div>\n'
     ]
     return newlines
