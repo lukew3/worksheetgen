@@ -49,6 +49,7 @@ def write_math(obj, probNum):
     #might need to loop a search for latex in case more than one use of latex is desired
     #find latex and store it as a string without markers
     latex_string = obj.question
+    size = obj.size_px
     renderNum = 0
     new = False
     while new == False:
@@ -63,7 +64,7 @@ def write_math(obj, probNum):
     '    <p class="problem_answerline">' + str(probNum) + ')______________</p>\n',
     '    <div class="flex-parent">\n',
     '       <p class="problem_text">' + str(probNum) + ')</p>\n',
-    '       <img src="out' + str(renderNum) + '.png" class="math_image">\n',
+    '       <img src="out' + str(renderNum) + f'.png" class="math_image" style="height:{size}px">\n',
     '    </div>\n',
     '</div>\n'
     ]

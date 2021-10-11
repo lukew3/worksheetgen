@@ -6,11 +6,13 @@ import requests
 from .write_prob import write_prob
 
 class Problem:
-    def __init__(self, question, answer='', type='', options=[]):
+    def __init__(self, question, answer='', type='', options=[], size_px=30):
         self.question = question
         self.answer = answer
         self.type = type
         self.options = options
+        # The size_px is only for the latex images
+        self.size_px = size_px
         if self.options != []:
             print(self.options)
 
@@ -25,7 +27,10 @@ class Worksheet:
         # Make a working copy of the html template
         packagedir = str(__file__)[:-5]
         tempdir = packagedir + "temp/"
-        os.mkdir(tempdir)
+        if not os.path.exists(os.path.join(packagedir, "temp")) :
+        	os.mkdir(tempdir)
+        else :
+        	pass
 
         workingFile = tempdir + 'working.html'
         shutil.copyfile(packagedir + 'base.html', workingFile)
@@ -60,8 +65,8 @@ class Worksheet:
         # Remove temp directory
         shutil.rmtree(tempdir)
 
-    def add_problem(self, problem, answer='', type='', options=[]):
-        newprob = Problem(problem, answer, type=type, options=options)
+    def add_problem(self, problem, answer='', type='', options=[], size_px=30):
+        newprob = Problem(problem, answer, type=type, options=options, size_px=size_px)
         self.prob_list.append(newprob)
 
     def add_problems_list(self, problems_list):
