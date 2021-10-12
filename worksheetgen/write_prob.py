@@ -70,12 +70,33 @@ def write_math(obj, probNum):
     ]
     return newlines
 
+def write_whitespace(lines) :
+	newlines = [
+	'<div class="whitespace">\n',
+	'	' + ('<br>'*lines),
+	'</div>\n'
+	]
+	return newlines
+
 def write_prob(problemObj, i):
-    if problemObj.type == '':
-        return write_problem(problemObj, i)
-    elif problemObj.type == 'instruction':
-        return write_instructions(problemObj)
-    elif problemObj.type == 'mc':
-        return write_multiple_choice(problemObj, i)
-    elif problemObj.type == 'math':
-        return write_math(problemObj, i)
+	problem = []
+	if problemObj.type == '':
+		problem.extend(write_problem(problemObj, i))
+	elif problemObj.type == 'instruction':
+		problem.extend(write_instructions(problemObj))
+	elif problemObj.type == 'mc':
+		problem.extend(write_multiple_choice(problemObj, i))
+	elif problemObj.type == 'math':
+		problem.extend(write_math(problemObj, i))
+	elif problemObj.type == 'whitespace':
+		problem.extend(problemObj.question)
+	else :
+		pass
+	
+	if problemObj.whitespace :
+		problem.extend(write_whitespace(problemObj.whitespacelen))
+	else :
+		pass
+	
+	return problem
+    	

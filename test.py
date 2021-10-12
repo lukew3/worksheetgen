@@ -9,8 +9,9 @@ ws = Worksheet(title='Example Worksheet')
 ws.add_instruction('Evaluate the following math problems')
 # Adds the problem given to the worksheet
 ws.add_problem('What is 9 + 10?')
-ws.add_problem('What is the square root of 9?')
+ws.add_problem('What is the square root of 9?', whitespace=True)
 ws.add_problem('f(x)=3x-5, f(2)=?', type='math')
+ws.add_whitespace()
 ws.add_problem('f(x)=3x-5, f(2)=?', type='math', size_px=35)
 # Export pdf to ws.pdf
 ws.write_pdf()
