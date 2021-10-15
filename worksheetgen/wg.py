@@ -56,6 +56,9 @@ class Worksheet:
             i = 1
             g.writelines(upper)
             for problemObj in self.prob_list:
+                if type(problemObj) == type("str") :
+                    g.writelines(problemObj)
+                    continue
                 g.writelines(write_prob(problemObj, i))
                 if problemObj.type not in ["instruction", "whitespace"]:
                     i += 1
@@ -92,3 +95,12 @@ class Worksheet:
     def add_instruction(self, instruction_text):
         newprob = Problem(instruction_text, "", type="instruction")
         self.prob_list.append(newprob)
+        
+    def start_section(self, name, description="Evaluate the following math problems") :
+        sect_start = '<div class="section" style="text-decoration:underline">\n<center><h2>'+name+'</h2></center><h4>'+description+'</h4>\n'
+        self.prob_list.append(sect_start)
+        
+    def end_section(self) :
+        sect_end = '<hr></div>'
+        self.prob_list.append(sect_end)
+        
