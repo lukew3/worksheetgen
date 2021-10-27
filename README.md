@@ -23,4 +23,3 @@ ws.write_pdf()
 This produces the following pdf:
 
 ![Image of output pdf](https://github.com/lukew3/worksheetgen/blob/main/ws.png)
-## Documentation
