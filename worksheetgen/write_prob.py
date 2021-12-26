@@ -1,4 +1,5 @@
 import os, requests
+from pathlib import Path
 
 def formula_as_file(formula, file):
     tfile = file
@@ -53,8 +54,8 @@ def write_math(obj, probNum):
     renderNum = 0
     new = False
     while new == False:
-        out_file = str(__file__)[:-13] + 'temp/out' + str(renderNum) + '.png'
-        if os.path.exists(out_file):
+        out_file = Path(__file__).parent / f'temp/out{renderNum}.png'
+        if out_file.exists():
             renderNum +=1
         else:
             new = True
@@ -92,11 +93,11 @@ def write_prob(problemObj, i):
 		problem.extend(problemObj.question)
 	else :
 		pass
-	
+
 	if problemObj.whitespace :
 		problem.extend(write_whitespace(problemObj.whitespacelen))
 	else :
 		pass
-	
+
 	return problem
-    	
+
