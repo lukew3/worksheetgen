@@ -1,3 +1,6 @@
+# This packages temp directory
+worksheetgen/temp/
+
 # Python development stuff
 **/__pycache__/
 .venv/
