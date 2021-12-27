@@ -3,6 +3,8 @@ import os
 import shutil
 import random
 import requests
+from pathlib import Path
+
 from .write_prob import write_prob, write_whitespace
 
 
@@ -27,15 +29,12 @@ class Worksheet:
 
     def write_pdf(self):
         # Make a working copy of the html template
-        packagedir = str(__file__)[:-5]
-        tempdir = packagedir + "temp/"
-        if not os.path.exists(os.path.join(packagedir, "temp")):
-            os.mkdir(tempdir)
-        else:
-            pass
+        packagedir = Path(__file__).parent
+        tempdir = packagedir / "temp"
+        tempdir.mkdir(exist_ok = True)
+        workingFile = tempdir / "working.html"
 
-        workingFile = tempdir + "working.html"
-        shutil.copyfile(packagedir + "base.html", workingFile)
+        shutil.copyfile(packagedir / "base.html", workingFile)
 
         # Change Title
         with open(workingFile, "r") as file:
@@ -95,12 +94,12 @@ class Worksheet:
     def add_instruction(self, instruction_text):
         newprob = Problem(instruction_text, "", type="instruction")
         self.prob_list.append(newprob)
-        
+
     def start_section(self, name, description="Evaluate the following math problems") :
         sect_start = '<div class="section" style="text-decoration:underline">\n<center><h2>'+name+'</h2></center><h4>'+description+'</h4>\n'
         self.prob_list.append(sect_start)
-        
+
     def end_section(self) :
         sect_end = '<hr></div>'
         self.prob_list.append(sect_end)
-        
+
