@@ -4,28 +4,46 @@ import shutil
 import random
 import requests
 from pathlib import Path
+from contextlib import contextmanager
 
 from .write_prob import write_prob, write_whitespace
 
 
-class Problem:
-    def __init__(self, question, answer="", type="", options=[], size_px=30, whitespace=False, whitespacelen=10):
+class Element:
+    def get_html_tag(self):
+        raise NotImplementedError
+
+
+class Problem(Element):
+    def __init__(self, question, answer=None):
         self.question = question
         self.answer = answer
-        self.type = type
-        self.options = options
-        # The size_px is only for the latex images
-        self.size_px = size_px
-        self.whitespace = whitespace
-        self.whitespacelen = whitespacelen
-        if self.options != []:
-            print(self.options)
+
+
+class Instruction(Element):
+    def __init__(self, text):
+        self.text = text
+
+
+class Whitespace(Element):
+    def __init__(self, lines):
+        self.lines = lines
+
+
+class Section(Element):
+    def __init__(self, children, name, description=None):
+        self.children = children
+        self.name = name
+        self.description = description
 
 
 class Worksheet:
     def __init__(self, title):
         self.title = title
         self.prob_list = []
+
+        # Temporary stack for sectioning, see method section() below.
+        self._section_stack = []
 
     def write_pdf(self):
         # Make a working copy of the html template
@@ -69,37 +87,25 @@ class Worksheet:
         # Remove temp directory
         shutil.rmtree(tempdir)
 
-    def add_problem(self, problem, answer="", type="", options=[], size_px=30, whitespace=False, whitespacelen=10):
-        newprob = Problem(problem, answer, type=type, options=options, size_px=size_px, whitespace=whitespace, whitespacelen=whitespacelen)
-        self.prob_list.append(newprob)
+    def add_problem(self, question, answer=None, whitespace_after=False):
+        self.prob_list.append(Problem(question, answer))
+        if whitespace_after:
+            self.prob_list.append(Whitespace(lines=10))
 
-    def add_whitespace(self, lines=10, type="whitespace"):
-        newprob = Problem(write_whitespace(lines), type="whitespace")
-        self.prob_list.append(newprob)
-
-    def add_problems_list(self, problems_list):
-        for item in problems_list:
-            if isinstance(item, list):
-                question = item[0]
-                answer = item[1]
-                try:
-                    type = item[2]
-                    newprob = Problem(question, answer, type)
-                except:
-                    newprob = Problem(question, answer)
-            else:
-                newprob = Problem(item)
-            self.prob_list.append(newprob)
+    def add_whitespace(self, lines=10):
+        self.prob_list.append(Whitespace(lines=lines))
 
     def add_instruction(self, instruction_text):
-        newprob = Problem(instruction_text, "", type="instruction")
-        self.prob_list.append(newprob)
+        self.prob_list.append(Instruction(instruction_text))
 
-    def start_section(self, name, description="Evaluate the following math problems") :
-        sect_start = '<div class="section" style="text-decoration:underline">\n<center><h2>'+name+'</h2></center><h4>'+description+'</h4>\n'
-        self.prob_list.append(sect_start)
+    @contextmanager
+    def section(self, name, description=None):
+        self._section_stack.append(self.prob_list.copy())
+        self.prob_list = []
 
-    def end_section(self) :
-        sect_end = '<hr></div>'
-        self.prob_list.append(sect_end)
+        yield
 
+        section_children = self.prob_list.copy()
+        self.prob_list = self._section_stack.pop()
+
+        self.prob_list.append(Section(section_children, name=name, description=description))
