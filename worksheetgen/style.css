@@ -1,0 +1,66 @@
+html {
+    font-family: 'Roboto', sans-serif;
+    margin: none;
+}
+
+@page {
+    @bottom-right {
+        content: "Page " counter(page) " of " counter(pages);
+    }
+}
+
+#header {
+    position: relative;
+    margin-bottom: 10pt;
+}
+
+#title {
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+}
+
+#name {
+    position: absolute;
+    float: right;
+    bottom: 0;
+    right: 0;
+    margin: 0;
+    padding: 0;
+}
+
+.problem_text {
+    max-width: 75%;
+    word-wrap: break-word;
+    display: inline-block;
+    font-size: 12pt;
+}
+
+.problem_answerline {
+    display: inline-block;
+    float: right;
+}
+
+ul {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+    margin-left: 12pt;
+    margin-top: -10pt;
+}
+
+.mc_option {
+    margin-bottom: 2pt;
+}
+
+.math_image {
+    height: 12pt;
+    margin-top: 1em;
+    padding-top: 2pt;
+    margin-bottom: 1em;
+    display: inline-block;
+}
+
+.flex-parent {
+    display: flex;
+}
