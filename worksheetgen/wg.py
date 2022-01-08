@@ -15,18 +15,20 @@ class Element:
 
 
 class Problem(Element):
-    def __init__(self, question, answer=None, render_type="text"):
-        if render_type not in ["text", "math"]:
-            raise ValueError("render_type must be either text or math")
-
+    def __init__(self, question, answer=None, number=None):
         self.question = question
         self.answer = answer
-        self.render_type = render_type
+        if number is None:
+            self._number = ""
+        else:
+            self._number = f"{number})"
 
     def get_html_tag(self):
+        question_text = self._number + self.question
+        answerline = self._number + "______________"
         return div(
-            p(self.question, _class="problem_text"),
-            p(")______________", _class="problem_answerline"),
+            p(question_text, _class="problem_text"),
+            p(answerline, _class="problem_answerline"),
             _class="problem"
         )
 
@@ -88,6 +90,14 @@ class Worksheet:
 
         # Temporary stack for sectioning, see method section() below.
         self._section_stack = []
+
+    @property
+    def number_of_problems(self):
+        N = 0
+        for elem in self.prob_list:
+            if isinstance(elem, Problem):
+                N += 1
+        return N
 
     def _write_html(self):
         # Load the css style
@@ -168,7 +178,7 @@ class Worksheet:
         weasyprint.HTML(string = final_html).write_pdf(outfile)
 
     def add_problem(self, question, answer=None, whitespace_after=False):
-        self.prob_list.append(Problem(question, answer))
+        self.prob_list.append(Problem(question, answer, number=self.number_of_problems + 1))
         if whitespace_after:
             self.prob_list.append(Whitespace(lines=10))
 
