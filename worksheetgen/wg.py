@@ -1,12 +1,12 @@
-from weasyprint import HTML
 import os
-import shutil
-import random
-import requests
 from pathlib import Path
 from contextlib import contextmanager
+from requests_file import FileAdapter
+from requests_html import HTMLSession
+import tempfile
 
-from .write_prob import write_prob, write_whitespace
+import weasyprint
+from domonic.html import *
 
 
 class Element:
@@ -15,19 +15,44 @@ class Element:
 
 
 class Problem(Element):
-    def __init__(self, question, answer=None):
+    def __init__(self, question, answer=None, render_type="text"):
+        if render_type not in ["text", "math"]:
+            raise ValueError("render_type must be either text or math")
+
         self.question = question
         self.answer = answer
+        self.render_type = render_type
+
+    def get_html_tag(self):
+        return div(
+            p(self.question, _class="problem_text"),
+            p(")______________", _class="problem_answerline"),
+            _class="problem"
+        )
 
 
 class Instruction(Element):
     def __init__(self, text):
         self.text = text
 
+    def get_html_tag(self):
+        return div(
+            p(b(
+                self.text
+            )),
+            _class="problem"
+        )
+
 
 class Whitespace(Element):
     def __init__(self, lines):
         self.lines = lines
+
+    def get_html_tag(self):
+        return div(
+            *[br() for _ in range(self.lines)],
+            _class="whitespace"
+        )
 
 
 class Section(Element):
@@ -35,6 +60,25 @@ class Section(Element):
         self.children = children
         self.name = name
         self.description = description
+
+    def get_html_tag(self):
+        html_tag = div(_class="section")
+
+        html_tag.append(
+            center(h2(self.name))
+        )
+
+        if self.description:
+            html_tag.append(h4(self.description))
+
+        for child in self.children:
+            html_tag.append(
+                child.get_html_tag()
+            )
+
+        html_tag.append(hr())
+
+        return html_tag
 
 
 class Worksheet:
@@ -45,47 +89,83 @@ class Worksheet:
         # Temporary stack for sectioning, see method section() below.
         self._section_stack = []
 
-    def write_pdf(self):
-        # Make a working copy of the html template
-        packagedir = Path(__file__).parent
-        tempdir = packagedir / "temp"
-        tempdir.mkdir(exist_ok = True)
-        workingFile = tempdir / "working.html"
+    def _write_html(self):
+        # Load the css style
+        style_css_path = Path(__file__).parent.joinpath('style.css')
+        with open(style_css_path) as f:
+            style_css_string = "".join(f.readlines())
 
-        shutil.copyfile(packagedir / "base.html", workingFile)
+        # Create the root HTML and head
+        doc = html(_lang="en", _dir="ltr")
+        doc.append(
+            head(
+                meta(_charset="utf-8"),
+                title(self.title),
+                link(_href="https://fonts.gstatic.com", _rel="preconnect"),
+                link(_href="https://fonts.googleapis.com/css2?family=Roboto&display=swap", _rel="stylesheet"),
+                style(style_css_string),
+                script(_type="text/javascript", _src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"),
+                script(
+                    '"MathJax.Hub.Config({'
+                        'config: ["MMLorHTML.js"],'
+                        'jax: ["input/TeX", "output/HTML-CSS", "output/NativeMML"],'
+                        'extensions: ["tex2math.js", "tex2jax.js", MathMenu.js", "MathZoom.js"],'
+                        '"HTML-CSS": { availableFonts: ["TeX"] }'
+                    '});")',
+                    _type="text/x-mathjax-config"
+                )
+            )
+        )
 
-        # Change Title
-        with open(workingFile, "r") as file:
-            lines = file.readlines()
-            lines[67] = '<h1 id="title">' + self.title + "</h1>\n"
-        with open(workingFile, "w") as file:
-            file.writelines(lines)
+        # Create the body tag
+        body_tag = body(
+            div(
+                h1(self.title, _id="title"),
+                h4("Name: ______________________", _id="name"),
+                _id="header",
+            ),
+            hr()
+        )
 
-        # get location of first line and copy lines before and after that
-        with open(workingFile, "r") as file:
-            lines = file.readlines()
-            line = lines.index('    <div id="problems">\n')
-            upper = lines[: line + 1]
-            lower = lines[line:]
+        # Create empty problems tag and
+        # Iterate through list of elements
+        problems_tag = div(_id="problems")
+        for elem in self.prob_list:
+            problems_tag.append(elem.get_html_tag())
 
-        # write file
-        with open(workingFile, "w") as g:
-            i = 1
-            g.writelines(upper)
-            for problemObj in self.prob_list:
-                if type(problemObj) == type("str") :
-                    g.writelines(problemObj)
-                    continue
-                g.writelines(write_prob(problemObj, i))
-                if problemObj.type not in ["instruction", "whitespace"]:
-                    i += 1
-            g.writelines(lower)
+        # Insert the tags respectively
+        body_tag.append(problems_tag)
+        doc.append(body_tag)
 
-        # export pdf
-        HTML(workingFile).write_pdf("ws.pdf")
+        return doc
 
-        # Remove temp directory
-        shutil.rmtree(tempdir)
+    def write_pdf(self, outfile='ws.pdf'):
+        doc = self._write_html()
+        directory = Path(os.getcwd())
+
+        # delete=False is to prevent errno 10054 on Windows,
+        # see https://stackoverflow.com/questions/23212435 and
+        # https://docs.python.org/3.9/library/tempfile.html#tempfile.NamedTemporaryFile
+        with tempfile.NamedTemporaryFile(mode="w+", prefix='tmp_', suffix='.html',
+                                         dir=directory, delete=False) as tmp:
+            tmp.write(f"{doc}")
+
+        with HTMLSession() as session:
+            session.mount("file://", FileAdapter())
+            site = session.get(f"file:///{Path(tmp.name).as_posix()}")
+            site.html.render(timeout=15, keep_page=True)
+            final_html = site.html.html
+
+            # Release the file handle manually
+            # This is to prevent errno 32 file in use
+            site.raw.release_conn()
+
+        # Delete the temporary file manually
+        # Comment this line if you wish to not delete the HTML
+        # for debugging purposes.
+        Path(tmp.name).unlink()
+
+        weasyprint.HTML(string = final_html).write_pdf(outfile)
 
     def add_problem(self, question, answer=None, whitespace_after=False):
         self.prob_list.append(Problem(question, answer))
