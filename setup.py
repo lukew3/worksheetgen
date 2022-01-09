@@ -10,6 +10,6 @@ setup(name='worksheetgen',
       packages=find_packages(),
       package_data={'': ['base.html']},
       include_package_data=True,
-      install_requires=['weasyprint'],
+      install_requires=['weasyprint', 'requests-file', 'requests-html', 'domonic'],
       entry_points={}
       )
